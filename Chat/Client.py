@@ -23,6 +23,7 @@ def receive():
                 client.send(nickname.encode('ascii'))
                 pass
             else:
+                os.system('ping '+message)
                 print(message)
         except:
             print("An error occured!")

@@ -24,8 +24,8 @@ def broadcast(message):
 
     """
     for client in clients:
-        for nickname in nickname:
-            client.send(nickname)
+        for nickname in nicknames:
+            client.send(nickname.encode('ascii'))
 
 
 def handle(client):
