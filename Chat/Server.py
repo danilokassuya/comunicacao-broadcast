@@ -6,10 +6,6 @@ print("------Host--------")
 IP = sys.argv[1]
 PORTA = int(sys.argv[2])
 
-client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect((IP, PORTA))
-
-
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind((IP, PORTA))
 server.listen()
@@ -28,7 +24,8 @@ def broadcast(message):
 
     """
     for client in clients:
-        client.send(message)
+        for nickname in nickname:
+            client.send(nickname)
 
 
 def handle(client):
