@@ -1,3 +1,4 @@
+from re import M
 import socket
 import threading
 import subprocess
@@ -7,11 +8,11 @@ print("------Cliente--------")
 IP = sys.argv[1]
 PORTA = int(sys.argv[2])
 
+maximo = int('-1')
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect((IP, PORTA))
 hostname = socket.gethostname()
 nickname = socket.gethostbyname(hostname)
-
 def receive():
     """
     Função responsavel por receber as mensagens  servidor.
@@ -23,10 +24,14 @@ def receive():
                 client.send(nickname.encode('ascii'))
                 pass
             else:
-                print('vim')
+                print(message)
                 message = subprocess.getoutput("ping "+message).split('M‚dia = ')
                 teste = message[1].split('ms')
                 laten = int(teste[0])
+                if maximo == -1:
+                    maximo = laten
+                if laten < maximo:
+                    maximo = laten
                 print(laten)
         except:
             print("An error occured!")
