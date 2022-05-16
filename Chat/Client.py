@@ -1,6 +1,6 @@
 import socket
 import threading
-import os
+import subprocess
 import sys
 
 print("------Cliente--------")
@@ -23,8 +23,11 @@ def receive():
                 client.send(nickname.encode('ascii'))
                 pass
             else:
-                os.system('ping '+message)
-                print(message)
+                print('vim')
+                message = subprocess.getoutput("ping "+message).split('M‚dia = ')
+                teste = message[1].split('ms')
+                laten = int(teste[0])
+                print(laten)
         except:
             print("An error occured!")
             client.close()
@@ -41,6 +44,5 @@ def write():
 receive_thread = threading.Thread(target=receive) # Cria uma thread para receber as mensagens enviadas do servidor
 receive_thread.start()
 
-write_thread = threading.Thread(target=write) # Cria uma thread para enviar mensagens do cliente para o servidor
-write_thread.start()
-
+#write_thread = threading.Thread(target=write) # Cria uma thread para enviar mensagens do cliente para o servidor
+#write_thread.start()

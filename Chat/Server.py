@@ -25,6 +25,7 @@ def broadcast(message):
     """
     for client in clients:
         for nickname in nicknames:
+            print(nickname)
             client.send(nickname.encode('ascii'))
 
 
@@ -68,7 +69,6 @@ def receive():
 
         print(f'Nome do cliente é {nickname}')
         broadcast(f'{nickname} entrou no chat'.encode('ascii'))
-        client.send('Conectou-se ao server'.encode('ascii'))
 
         thead = threading.Thread(target=handle, args=(client,))
         thead.start()
