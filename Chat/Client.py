@@ -24,15 +24,22 @@ def receive():
                 client.send(nickname.encode('ascii'))
                 pass
             else:
-                print(message)
-                message = subprocess.getoutput("ping "+message).split('M‚dia = ')
-                teste = message[1].split('ms')
-                laten = int(teste[0])
-                if maximo == -1:
-                    maximo = laten
-                if laten < maximo:
-                    maximo = laten
-                print(laten)
+                if message == 'fim':
+                    print(destino)
+                    client.send(destino.encode('ascii'))
+                    print("teste")
+                else:
+                    print("test23")
+                    ping = subprocess.getoutput("ping "+message).split('M‚dia = ')
+                    teste = ping[1].split('ms')
+                    laten = int(teste[0])
+                    if maximo == -1:
+                        maximo = laten
+                        destino = message
+                    if laten < maximo:
+                        maximo = laten
+                        destino = message
+                    print(laten)
         except:
             print("An error occured!")
             client.close()

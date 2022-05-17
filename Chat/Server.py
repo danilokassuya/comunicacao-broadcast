@@ -12,7 +12,7 @@ server.listen()
 
 clients = []    # Lista reponsavel por salver os clientes conectados
 nicknames = []  # Lista responsavel por salver os nomes dos clientes 
-
+listaConec = []
 
 
 def broadcast(message):
@@ -23,11 +23,18 @@ def broadcast(message):
         Mensagem que deseja enviar para todos os clientes.
 
     """
+    i = 0
     for client in clients:
         for nickname in nicknames:
-            print(nickname)
             client.send(nickname.encode('ascii'))
+        client.send("fim".encode('ascii'))
+        destino = client.recv(1024).decode('ascii')
+        listaConec[i] = destino
+        print(listaConec[i])
+        i += 1
+                
 
+            
 
 def handle(client):
     """
@@ -49,6 +56,7 @@ def handle(client):
             clients.remove(client)
             client.close()
             nickname = nicknames[index]
+            listaConec.append(listaConec[index])
             broadcast(f'{nickname} saiu do chat!'.encode('ascii'))
             nicknames.remove(nickname)
             break
@@ -65,6 +73,7 @@ def receive():
         client.send('NICK'.encode('ascii')) 
         nickname = client.recv(1024).decode('ascii')
         nicknames.append(nickname)
+        listaConec.append('')
         clients.append(client)
 
         print(f'Nome do cliente é {nickname}')
