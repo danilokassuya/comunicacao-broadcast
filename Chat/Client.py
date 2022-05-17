@@ -7,8 +7,6 @@ import sys
 print("------Cliente--------")
 IP = sys.argv[1]
 PORTA = int(sys.argv[2])
-
-maximo = int('-1')
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect((IP, PORTA))
 hostname = socket.gethostname()
@@ -17,6 +15,8 @@ def receive():
     """
     Função responsavel por receber as mensagens  servidor.
     """
+    
+    maximo = int('-1')
     while True:
         try:
             message = client.recv(1024).decode('ascii')
