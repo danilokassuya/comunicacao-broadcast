@@ -15,6 +15,52 @@ nicknames = []  # Lista responsavel por salver os nomes dos clientes
 listaConec = []
 
 
+def sendMessage(nick, message):
+    """
+    Função responsavel por mandar mensagens para todos os clientes com um nome especifico.
+
+    Args: message : str
+        nick : str
+        Mensagem que deseja enviar para todos os clientes.
+
+    """
+    position = nicknames.index(nick.capitalize())
+    clients[position].send(message.encode('ascii'))
+    
+
+def sendAllClientsConnected(nick):
+    """
+    Função responsavel por listar todos os clientes conectados
+
+    Args: message : str
+        nick : str
+        Mensagem que deseja enviar para todos os clientes.
+
+    """
+    mensagem = ""
+    i = 0
+    for nickname in nicknames:
+        mensagem += f"{i} - {nickname}\n"
+        print(mensagem)
+        i += 1
+    sendMessage(nick, mensagem)
+
+def sendToComputer(sender, comando):
+    comando = comando.split
+
+    if(len(comando) < 3):
+        return
+    
+    receiver = comando[1].capitalize()
+
+    mensagem = ' '.join(comando[2:])
+
+    for nickname in nicknames:
+        if nickname == receiver:
+            sendMessage(nickname, mensagem)
+            return
+    
+
 def broadcast(message):
     """
     Função responsavel por mandar mensagens para todos os clientes conectados.
@@ -23,16 +69,9 @@ def broadcast(message):
         Mensagem que deseja enviar para todos os clientes.
 
     """
-    i = 0
     for client in clients:
-        for nickname in nicknames:
-            client.send(nickname.encode('ascii'))
-        client.send("fim".encode('ascii'))
-        destino = client.recv(1024).decode('ascii')
-        listaConec[i] = destino
-        print(listaConec[i])
-        i += 1
-                
+        client.send(message)
+
 
             
 
@@ -47,10 +86,19 @@ def handle(client):
     Except: Caso o objeto não for encontrado ele será desalocado da nossa lista de clientes.
 
     """
+    index = clients.index(client)
+    nickname = nicknames[index]
     while True:
         try:
-            message = client.recv(1024)
-            broadcast(message)
+            messagem = client.recv(1024).decode('ascii')
+            print(f"Server recebeu {messagem}")
+            
+
+            if messagem == "/listar":
+                sendAllClientsConnected(nickname)
+            if "/enviar" in messagem: # /enviar <idDoComputador> <Mensagem>
+                sendToComputer(nickname, messagem)
+            #broadcast(message)
         except:
             index = clients.index(client)
             clients.remove(client)
@@ -72,8 +120,7 @@ def receive():
         
         client.send('NICK'.encode('ascii')) 
         nickname = client.recv(1024).decode('ascii')
-        nicknames.append(nickname)
-        listaConec.append('')
+        nicknames.append(nickname.capitalize())
         clients.append(client)
 
         print(f'Nome do cliente é {nickname}')
