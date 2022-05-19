@@ -45,6 +45,7 @@ def sendAllClientsConnected(nick):
         i += 1
     sendMessage(nick, mensagem)
 
+
 def sendToComputer(sender, comando):
     comando = comando.split
 
@@ -52,13 +53,24 @@ def sendToComputer(sender, comando):
         return
     
     receiver = comando[1].capitalize()
+    try:
+        receiver = int(receiver)
+    except:
+        sendMessage(sender, "ERRO nos Parametros no comando /enviar.")
+        return
 
+
+    if receiver > len(nicknames):
+        sendMessage(sender, "ERRO id não existe.")
+        return
+    
     mensagem = ' '.join(comando[2:])
-
-    for nickname in nicknames:
-        if nickname == receiver:
-            sendMessage(nickname, mensagem)
-            return
+    mensagem = sender + ": " + mensagem
+    print("Debug | " + mensagem)
+    nickname = nicknames[receiver]
+    sendMessage(nickname, mensagem)
+    sendMessage(sender, "Mensagem enviado com sucesso.")
+    
     
 
 def broadcast(message):
@@ -86,14 +98,13 @@ def handle(client):
     Except: Caso o objeto não for encontrado ele será desalocado da nossa lista de clientes.
 
     """
-    index = clients.index(client)
-    nickname = nicknames[index]
+    
     while True:
         try:
             messagem = client.recv(1024).decode('ascii')
             print(f"Server recebeu {messagem}")
-            
-
+            index = clients.index(client)
+            nickname = nicknames[index]
             if messagem == "/listar":
                 sendAllClientsConnected(nickname)
             if "/enviar" in messagem: # /enviar <idDoComputador> <Mensagem>
@@ -104,8 +115,8 @@ def handle(client):
             clients.remove(client)
             client.close()
             nickname = nicknames[index]
-            listaConec.append(listaConec[index])
-            broadcast(f'{nickname} saiu do chat!'.encode('ascii'))
+            #listaConec.append(listaConec[index]) 
+            #broadcast(f'{nickname} saiu do chat!'.encode('ascii')) # apenas para teste
             nicknames.remove(nickname)
             break
 

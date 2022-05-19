@@ -3,6 +3,7 @@ import socket
 import threading
 import subprocess
 import sys
+from traceback import print_tb
 
 print("------Cliente--------")
 IP = sys.argv[1]
@@ -65,14 +66,23 @@ def receive():
 #             print("An error occured!")
 #             client.close()
 #             break
-    
+
+def help():
+    print("---------------------------- HELP ----------------------------")
+    print("/listar\n\tComando responsavel por listar todos os aparelhos conectados na rede.\n\tExemplo: /listar")
+    print("/enviar <id> <mensagem>\n\tComando responsavel por enviar uma mensagem para um outro computador.\n\t\t- <id>:  Id do computador destino.\n\t\t- <mensagem>: Mensagem a ser enviada\n\tExemplo: /enviar 1 Teste de mensagem.")
+    print("-"*62)
+
 def write():
     """
     Função responsavel por enviar a mensagem do cliente para o servidor.
     """
     while True:
-        message = f'{input("")}'
-        client.send(message.encode('ascii'))
+        menssagem = f'{input("")}'
+        if "/help" in menssagem:
+            help()
+        client.send(menssagem.encode('ascii'))
+print("Digite /help para ver todos os comandos")
 
 receive_thread = threading.Thread(target=receive) # Cria uma thread para receber as mensagens enviadas do servidor
 receive_thread.start()
