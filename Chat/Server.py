@@ -47,22 +47,28 @@ def sendAllClientsConnected(nick):
 
 
 def sendToComputer(sender, comando):
-    comando = comando.split
-
-    if(len(comando) < 3):
+    print(type(comando))
+    print("DEBUG: comando => " + comando)
+    aux = comando.split(" ")
+    print("DEBUG 1 " + len(aux))
+    if(len(aux) < 3):
         return
+    print("DEBUG 2")
     
-    receiver = comando[1].capitalize()
+    receiver = aux[1].capitalize()
     try:
         receiver = int(receiver)
+        print("DEBUG 3")
     except:
         sendMessage(sender, "ERRO nos Parametros no comando /enviar.")
         return
 
+    print("DEBUG 4")
 
     if receiver > len(nicknames):
         sendMessage(sender, "ERRO id não existe.")
         return
+    print("DEBUG 5")
     
     mensagem = ' '.join(comando[2:])
     mensagem = sender + ": " + mensagem
@@ -106,8 +112,11 @@ def handle(client):
             index = clients.index(client)
             nickname = nicknames[index]
             if messagem == "/listar":
+                print("Debug: entrou em /listar")
                 sendAllClientsConnected(nickname)
             if "/enviar" in messagem: # /enviar <idDoComputador> <Mensagem>
+                print("Debug: entrou em /enviar")
+                print("Debug: Mensagem recebida: " + messagem)
                 sendToComputer(nickname, messagem)
             #broadcast(message)
         except:
@@ -115,6 +124,7 @@ def handle(client):
             clients.remove(client)
             client.close()
             nickname = nicknames[index]
+            print("Debug: " + nickname + " perdeu a conexao.")
             #listaConec.append(listaConec[index]) 
             #broadcast(f'{nickname} saiu do chat!'.encode('ascii')) # apenas para teste
             nicknames.remove(nickname)

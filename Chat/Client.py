@@ -32,53 +32,18 @@ def receive():
             client.close()
             break
 
-
-# def receive():
-#     """
-#     Função responsavel por receber as mensagens  servidor.
-#     """
-    
-#     maximo = int('-1')
-#     while True:
-#         try:
-#             message = client.recv(1024).decode('ascii')
-#             if message == 'NICK':
-#                 client.send(nickname.encode('ascii'))
-#                 pass
-#             else:
-#                 if message == 'fim':
-#                     print(destino)
-#                     client.send(destino.encode('ascii'))
-#                     print("teste")
-#                 else:
-#                     print("test23")
-#                     ping = subprocess.getoutput("ping "+message).split('M‚dia = ')
-#                     teste = ping[1].split('ms')
-#                     laten = int(teste[0])
-#                     if maximo == -1:
-#                         maximo = laten
-#                         destino = message
-#                     if laten < maximo:
-#                         maximo = laten
-#                         destino = message
-#                     print(laten)
-#         except:
-#             print("An error occured!")
-#             client.close()
-#             break
-
 def help():
     print("---------------------------- HELP ----------------------------")
-    print("/listar\n\tComando responsavel por listar todos os aparelhos conectados na rede.\n\tExemplo: /listar")
+    print("/listar\n\tComando responsavel por listar todos os aparelhos conectados na rede.\n\tExemplo: /listar\n")
     print("/enviar <id> <mensagem>\n\tComando responsavel por enviar uma mensagem para um outro computador.\n\t\t- <id>:  Id do computador destino.\n\t\t- <mensagem>: Mensagem a ser enviada\n\tExemplo: /enviar 1 Teste de mensagem.")
-    print("-"*62)
+
 
 def write():
     """
     Função responsavel por enviar a mensagem do cliente para o servidor.
     """
     while True:
-        menssagem = f'{input("")}'
+        menssagem = f'{input("Comando: ")}'
         if "/help" in menssagem:
             help()
         client.send(menssagem.encode('ascii'))
