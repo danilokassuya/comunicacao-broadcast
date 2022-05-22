@@ -44,7 +44,6 @@ def sendToAnotherServer(message):
     serverAux2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
         serverAux2.connect((IP_address, Port_to))
-        print(len(message))
         serverAux2.send(message)
     except:
         print("Nao foi possivel enviar a mensagem para o outro servidor")
@@ -118,7 +117,12 @@ def handleServer(clientServer):
         try:
             message = clientServer.recv(1024).decode('ascii')
             if len(message) != 0:
-                broadcast(message)
+                if message in historico:
+                    print("Mensagem já enviada")
+                    historico.remove(message)
+                else:
+                    historico.append(message)
+                    broadcast(message.encode('ascii'))
         except:
             print("Erro ocorreu no servidor")
             clientServer.close()
