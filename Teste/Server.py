@@ -12,7 +12,7 @@ from matplotlib.pyplot import hist
 print("-------SERVER--------")
 host = sys.argv[1] 
 port = int(sys.argv[2])
-print("IP: "+ host +":" + str(port))
+print("IP: "+ host +":" + int(port))
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.bind((host, port))
@@ -118,9 +118,12 @@ def handleServer(clientServer):
         try:
             message = clientServer.recv(1024).decode('ascii')
             if len(message) != 0:
-                broadcast(message)
+                if message.decode('ascii') not in historico:
+                    historico.insert(message.decode('ascii'))
+                    broadcast(message)
+                historico.remove(message.decode('ascii'))
         except:
-            print("Erro ocorreu no servidor")
+            print("An error occured!")
             clientServer.close()
             break
 
