@@ -14,7 +14,8 @@ client.connect((IP_address, Port))
 
 def receive():
     """
-    Função responsavel por receber as mensagens  servidor.
+    Funcao responsavel por receber as mensagens  servidor.
+
     """
     while True:
         try:
@@ -31,7 +32,7 @@ def receive():
     
 def write():
     """
-    Função responsavel por enviar a mensagem do cliente para o servidor.
+    Funcao responsavel por enviar a mensagem do cliente para o servidor.
     """
     while True:
         message = f'{nickname}: {input("")}'

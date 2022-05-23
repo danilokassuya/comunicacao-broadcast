@@ -1,0 +1,14 @@
+digraph "Server.broadcast"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  rankdir="RL";
+  Node1 [label="Server.broadcast",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black",tooltip=" "];
+  Node1 -> Node2 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node2 [label="Server.handle",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$namespace_server.html#acf7ca7dbf2bd3d673bf2628a9779a8fb",tooltip=" "];
+  Node1 -> Node3 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node3 [label="Server.handleServer",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$namespace_server.html#a47f6bd6a840a9d3597f653a726ce188d",tooltip=" "];
+  Node1 -> Node4 [dir="back",color="midnightblue",fontsize="10",style="solid",fontname="Helvetica"];
+  Node4 [label="Server.receive",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$namespace_server.html#ab9d00ec901183f31c044be6a3e7dfcec",tooltip=" "];
+}

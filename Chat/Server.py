@@ -37,8 +37,8 @@ def sendToAnotherServer(message):
     """
     Função responsavel por mandar mensagens para outro servidor.
 
-    Args: message : str
-        Mensagem que deseja enviar para o servidor
+    Args: 
+        message: str   Mensagem que deseja enviar para o servidor
 
     """
     serverAux2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -54,8 +54,8 @@ def broadcast(message):
     """
     Função responsavel por mandar mensagens para todos os clientes conectados.
 
-    Args: message : str
-        Mensagem que deseja enviar para todos os clientes.
+    Args: 
+        message: str    Mensagem que deseja enviar para todos os clientes.
 
     """
     print('enviado -> '+ message.decode('ascii'))
@@ -69,12 +69,14 @@ def broadcast(message):
 def handle(client):
     """
     Função responsavel por controlar o objeto cliente. 
-        - Geralmente está função será atribuida a uma Thread.
+    
+    Geralmente está função será atribuida a uma Thread.
 
-    Args: client : objeto cliente
-        Objeto criado pelo modulo Client.py.
+    Args:
+        client: objeto cliente - Objeto criado pelo modulo Client.py.
 
-    Except: Caso o objeto não for encontrado ele será desalocado da nossa lista de clientes.
+    Raises: 
+        Caso o objeto não for encontrado ele será desalocado da nossa lista de clientes.
 
     """
     while True:
@@ -92,7 +94,7 @@ def handle(client):
 
 def receive():
     """
-    Função responsavel por adicionar novos clientes ao servidor.
+    Funcao responsavel por adicionar novos clientes ao servidor.
         - Irá receber novas solicitações de clientes e adicionar cada novo cliente a uma Thread.
     """
     while True:
@@ -113,12 +115,22 @@ def receive():
         thead.start()
 
 def handleServer(clientServer):
+    """
+    Funcao responsavel por controlar a comunicacao com outro servidor
+
+    Args:
+        clientServer: Objeto relacionado a o servidor conectado
+        
+    Raises: 
+        Caso o objeto não for encontrado ele será desalocado o servidor
+
+    """
     while True:
         try:
             message = clientServer.recv(1024).decode('ascii')
             if len(message) != 0:
                 if message in historico:
-                    print("Mensagem já enviada")
+                    #print("Mensagem já enviada")
                     historico.remove(message)
                 else:
                     historico.append(message)
@@ -130,6 +142,13 @@ def handleServer(clientServer):
 
 
 def receiveServer():
+    """
+    Funcao responsavel receber mensagens de outro servidor
+        
+    Raises: 
+        Caso o objeto não for encontrado ele será desalocado
+
+    """
     serverAux = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     print("Servidor de Recebimento -> " + host + ":" + str(port))
     serverAux.bind((host, port))
