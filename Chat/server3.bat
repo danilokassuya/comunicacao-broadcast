@@ -1,2 +1,2 @@
-py Server.py localhost 8002 localhost 8000
+py Server.py 191.52.64.237 8000 191.52.64.237 8004
 pause

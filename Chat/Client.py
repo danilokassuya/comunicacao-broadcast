@@ -1,15 +1,15 @@
 import socket
 import threading
+import sys
 
 print("------Cliente--------")
 #nickname = input("Choose a nickname: ")
-nickname = input("Escolha seu nome de usuario: ")
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-IP_address = input("Forneça o IP da maquina: ")
-Port = int(input("Forneça a porta da maquina: "))
-
-client.connect((IP_address, Port))
+host = sys.argv[1] 
+hosthead = sys.argv[2] 
+ping = -1
+client.connect((hosthead, 8000))
 
 
 def receive():
@@ -20,11 +20,7 @@ def receive():
     while True:
         try:
             message = client.recv(1024).decode('ascii')
-            if message == 'NICK':
-                client.send(nickname.encode('ascii'))
-                pass
-            else:
-                print(message)
+            print(message)
         except:
             print("An error occured!")
             client.close()
@@ -38,9 +34,19 @@ def write():
         message = f'{nickname}: {input("")}'
         client.send(message.encode('ascii'))
 
-receive_thread = threading.Thread(target=receive) # Cria uma thread para receber as mensagens enviadas do servidor
-receive_thread.start()
+def getPing(client,host):
+    i = 0
+    while i < 10:
+        client.send("teste".encode('ascii'))
+        i += 1
+    client.send("teste".encode('fim'))
 
-write_thread = threading.Thread(target=write) # Cria uma thread para enviar mensagens do cliente para o servidor
-write_thread.start()
+def connectHead():
+    client.send(host.encode('ascii'))
+    i = 0
+    host = client.recv(1024).decode('ascii')
+    getPing(client,host)
+    porta = client.recv(1024).decode('ascii')
+    return 1
+connectHead()
 

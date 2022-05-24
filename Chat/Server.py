@@ -4,7 +4,6 @@ import threading
 import socket
 import sys
 
-from matplotlib.pyplot import hist
 
 """
     Modulo responsavel por criar e controlar o Servidor
@@ -43,6 +42,8 @@ def sendToAnotherServer(message):
     """
     serverAux2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
+        print(IP_address)
+        print(Port_to)
         serverAux2.connect((IP_address, Port_to))
         serverAux2.send(message)
     except:
