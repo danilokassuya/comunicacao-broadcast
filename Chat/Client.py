@@ -50,7 +50,7 @@ def getPing(host):
         serveraux.connect((host,int(portas[i])))
         start = time.time()
         serveraux.send("t".encode('ascii'))
-        message = serveraux.recv(1)
+        message = serveraux.recv(1024)
         ping = sys.argv[3]
         #ping = time.time()-start
         serveraux.send("p".encode('ascii'))
@@ -73,7 +73,8 @@ def connectHead(host):
     message = host + " " + nickname + " " + str(port[1])
     client.send(message.encode('ascii'))# envia ip nick e porta
     getPing(host)
-    return 1
+    print("saiu do getPing")
+    #return 1
 
 def checkping(ping,server):
     global max
@@ -95,7 +96,7 @@ def messagerecv(server):
     global max
     while True:
         try:
-            message = server.recv(1).decode('ascii')
+            message = server.recv(1024).decode('ascii')
             if message == "p":
                 message = server.recv(1024).decode('ascii')
                 ping = float(message)
@@ -127,15 +128,15 @@ def messagerecv(server):
             print("Servidor conectado foi trocado")
             break
 
-def write(clientServer):
+def write(server):
     """
     Função responsavel por enviar a mensagem do cliente para o servidor.
     """
     while True:
         message = f'{nickname}: {input("")}'
         try:
-            clientServer.send("r".encode('ascii'))
-            clientServer.send(message.encode('ascii'))
+            server.send("r".encode('ascii'))
+            server.send(message.encode('ascii'))
         except:
             print("nao foi possivel enviar a mensagem")
             break
@@ -146,12 +147,17 @@ server.bind((host, 0))
 server.listen()
 connectHeadThread = threading.Thread(target=connectHead, args=(host,))
 connectHeadThread.start()
+print("teste aqui")
 port = server.getsockname()
+print("teste aqui 2")
 while True:
+    print("teste aqui 2")
     clientServer, addressServer = server.accept()
+    print("teste aqui 3")
     messagerecvThread = threading.Thread(target=messagerecv, args=(clientServer,))
-    messagerecvThread.start()
-    write_thread = threading.Thread(target=write, args=(client,)) # Cria uma thread para enviar mensagens do cliente para o servidor
+    write_thread = threading.Thread(target=write, args=(clientServer,)) # Cria uma thread para enviar mensagens do cliente para o servidor
     write_thread.start()
+    print("teste aqui 3")
+    messagerecvThread.start()
 
 
