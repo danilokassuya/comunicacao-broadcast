@@ -1,2 +1,2 @@
-py "Head Server.py" localhost 8000
+py "Head Server.py" localhost
 pause
