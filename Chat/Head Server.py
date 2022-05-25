@@ -5,7 +5,6 @@ import socket
 print("------Server Principal--------")
 host = sys.argv[1] 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-disponivel = []
 servers = []
 porta = []
 nicks = []
@@ -24,17 +23,22 @@ def receive(server):
     while True:
         try:
             message = server.recv(1024).decode('ascii')
+            print(servers)
             if message == "ping":
                 i = 0
                 for ser in servers:
                     if(nicks[i] != nick):
                         ipPorta = ser + " " + porta[i]
-                        print(sys.getsizeof(ipPorta))
                         server.send(ipPorta.encode('ascii'))
                         i = i + 1
             server.send("fim".encode('ascii'))
-        except socket.timeout:
-            print("Alguma mensagem foi perdida")
+        except:
+            print(nick+" desconectou")
+            i = nicks.index(nick)
+            del porta[i]
+            del servers[i]
+            print(i)
+            nicks.remove(nick)
             server.close()
             break
 server.bind((host, 8000))
