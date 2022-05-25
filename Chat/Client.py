@@ -1,15 +1,17 @@
 import socket
 import threading
 import sys
+import time
 
 print("------Cliente--------")
 #nickname = input("Choose a nickname: ")
-nickname = "algo"
+nickname = sys.argv[2] 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 hosthead = sys.argv[1] 
 client.connect((hosthead, 8000))
-max = -1
+max = float(-1)
+port = 0
 def receive():
     """
     Funcao responsavel por receber as mensagens  servidor.
@@ -32,61 +34,97 @@ def write():
         message = f'{nickname}: {input("")}'
         client.send(message.encode('ascii'))
 
-def getPing(client,host):
+def getPing(host):
     hosts = []
     portas = []
-    message = client.recv(1024)
+    client.send("ping".encode('ascii'))
+    message = client.recv(1024).decode('ascii')
     while message != "fim":
-        hosts.append(message)
-        message = client.recv(1024)
-        portas.append(message)
-        message = client.recv(1024)
+        message = message.split()
+        hosts.append(message[0])
+        portas.append(message[1])
+        message = client.recv(68).decode('ascii')
     i = 0
-    for host in host:
+    for host in hosts:
         serveraux = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        serveraux.connect(host,portas[i])
-        i += 1
-    serveraux.send("teste".encode('fim'))
-
-def connectHead(host):
-    client.send(host.encode('ascii'))# envia IP
-    client.send(nickname.encode('ascii'))# envia nick do client
-    getPing(client,host)
-    porta = client.recv(1024).decode('ascii')
-    return 1
-def waitConnect(server):
-    port = server.getsockname()
-    clientServer, addressServer = server.accept()
-    messagerecv = threading.Thread(target=messagerecv, args=(clientServer,))
-    messagerecv.start()
-
-def messagerecv(server):
-    ping = -1
-    while True:
-        try:
-            message = server.recv(1024).decode('ascii')
-            print(message)
-            if message == "ping":
-                message = server.recv(1024).decode('ascii')
-                ping = int(message)
-                checkping = threading.Thread(target=checkping, args=(ping,server))
-                checkping.start()
-            else: 
-                if message == "teste":
-                    server.send("teste".encode('ascii'))
-            #else: if mensagem verifica ip destino esse ou repassa
-        except:
-            print("Erro ocorrido")
+        serveraux.connect((host,int(portas[i])))
+        start = time.time()
+        serveraux.send("t".encode('ascii'))
+        message = serveraux.recv(1)
+        ping = sys.argv[3]
+        #ping = time.time()-start
+        serveraux.send("p".encode('ascii'))
+        serveraux.send(str(ping).encode('ascii'))
+        print(ping)
+        print(portas[i])
+        message = client.recv(1024).decode('ascii')
+        print(message)
+        if message == "sim":
+            print(portas[i])
             break
+        serveraux.close()
+        i += 1
+def connectHead(host):
+    """ Conecta com o server de entrada e executa as funções para achar o client com melhor ping """
+    port = server.getsockname()
+    print(port)
+    while port[1] == 0:
+        port = server.getsockname()
+    message = host + " " + nickname + " " + str(port[1])
+    client.send(message.encode('ascii'))# envia ip nick e porta
+    getPing(host)
+    return 1
+
 def checkping(ping,server):
-    while True:
+    global max
+    while True: 
+        if ping < max:
+            max = ping
+        if max == -1:
+            max = ping
         if ping > max:
             server.close()
             break
 
-waitConnect = threading.Thread(target=waitConnect, args=(server,))
-waitConnect.start()
-hostname = server.gethostname()
-host = server.gethostbyname(hostname)
-connectHead(host)
+
+def messagerecv(server):
+    """ 
+    Trata os clientes conectados com esse usuario
+    Recebe o ping dos dois para comparação
+    Printa ou redireciona as mensagens recebidas 
+    """
+    ping = -1
+    while True:
+        try:
+            message = server.recv(1).decode('ascii')
+            print(message)
+            if message == "p":
+                message = server.recv(1024).decode('ascii')
+                ping = float(message)
+                checkpingThread = threading.Thread(target=checkping, args=(ping,server))
+                checkpingThread.start()
+                if ping < max:
+                    server.send("sim".encode('ascii'))
+                if ping >= max:
+                    server.send("nao".encode('ascii'))
+            else: 
+                if message == "t":
+                    server.send("teste".encode('ascii'))
+            #else: if mensagem verifica ip destino esse ou repassa
+        except Exception as e:
+            print(ping)
+            print("Servidor conectado foi trocado")
+            break
+
+hostname = socket.gethostname()
+host = socket.gethostbyname(hostname)
+server.bind((host, 0))
+server.listen()
+connectHeadThread = threading.Thread(target=connectHead, args=(host,))
+connectHeadThread.start()
+port = server.getsockname()
+while True:
+    clientServer, addressServer = server.accept()
+    messagerecvThread = threading.Thread(target=messagerecv, args=(clientServer,))
+    messagerecvThread.start()
 

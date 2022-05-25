@@ -9,42 +9,36 @@ disponivel = []
 servers = []
 porta = []
 nicks = []
-servers.append(host)
-disponivel.append("sim")
 nova = 0
 def receive(server):
     """
     Funcao responsavel por receber as mensagens  servidor.
 
     """
+    message = server.recv(1024).decode('ascii')
+    message = message.split()
+    servers.append(message[0])
+    nicks.append(message[1])
+    nick = message[1]
+    porta.append(message[2])
     while True:
         try:
-            nova = 1
             message = server.recv(1024).decode('ascii')
-            servers.append(message)
-            disponivel.append("sim")
-            message = server.recv(1024).decode('ascii')
-            nicks.append(message)
-            print("aqui")
-            porta.append(port)
-            i = 0
-            for ser in servers:
-                if(disponivel[i] == "sim"):
-                    server.send(ser.encode('ascii'))
-                    server.send(porta[i].encode('ascii'))
-                    i = i +1
-            nova = 1
+            if message == "ping":
+                i = 0
+                for ser in servers:
+                    if(nicks[i] != nick):
+                        ipPorta = ser + " " + porta[i]
+                        print(sys.getsizeof(ipPorta))
+                        server.send(ipPorta.encode('ascii'))
+                        i = i + 1
+            server.send("fim".encode('ascii'))
         except socket.timeout:
             print("Alguma mensagem foi perdida")
             server.close()
             break
-        except:
-            print("An error occured!")
-            server.close()
-            break
 server.bind((host, 8000))
 server.listen()
-server.settimeout(5)
 print("Ip e porta do server principal")
 print(server.getsockname())
 port = server.getsockname()
