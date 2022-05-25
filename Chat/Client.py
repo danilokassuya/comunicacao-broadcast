@@ -107,6 +107,9 @@ def messagerecv(server):
                     server.send("sim".encode('ascii'))
                 if ping >= max:
                     server.send("nao".encode('ascii'))
+            if message == "r":
+                message = server.recv(1024).decode('ascii')
+                print(message)
             else: 
                 if message == "t":
                     server.send("teste".encode('ascii'))
@@ -114,6 +117,19 @@ def messagerecv(server):
         except Exception as e:
             print(ping)
             print("Servidor conectado foi trocado")
+            break
+
+def write(clientServer):
+    """
+    Função responsavel por enviar a mensagem do cliente para o servidor.
+    """
+    while True:
+        message = f'{nickname}: {input("")}'
+        try:
+            clientServer.send("r".encode('ascii'))
+            clientServer.send(message.encode('ascii'))
+        except:
+            print("nao foi possivel enviar a mensagem")
             break
 
 hostname = socket.gethostname()
@@ -127,4 +143,7 @@ while True:
     clientServer, addressServer = server.accept()
     messagerecvThread = threading.Thread(target=messagerecv, args=(clientServer,))
     messagerecvThread.start()
+    write_thread = threading.Thread(target=write, args=(client,)) # Cria uma thread para enviar mensagens do cliente para o servidor
+    write_thread.start()
+
 
