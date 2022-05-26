@@ -53,8 +53,17 @@ def getPing(host):
         message = serveraux.recv(1)
         ping = sys.argv[3]
         #ping = time.time()-start
+        serveraux.send("p".encode('ascii'))
+        serveraux.send(str(ping).encode('ascii'))
+        message = serveraux.recv(1024).decode('ascii')
+        message = serveraux.recv(1024).decode('ascii')
+        print("aqui")
+        print(message)
+        if message == "sim":
+            print(portas[i])
+            break
+        serveraux.close()
         i += 1
-        time.sleep(10)
 def connectHead(host):
     """ Conecta com o server de entrada e executa as funções para achar o client com melhor ping """
     port = server.getsockname()
@@ -66,15 +75,46 @@ def connectHead(host):
     getPing(host)
     return 1
 
+def checkping(ping,server):
+    global max
+    while True: 
+        if ping < max:
+            max = ping
+        if ping > max:
+            server.close()
+            break
+
+
 def messagerecv(server):
     """ 
     Trata os clientes conectados com esse usuario
+    Recebe o ping dos dois para comparação
     Printa ou redireciona as mensagens recebidas 
     """
+    ping = -1
     global max
     while True:
         try:
             message = server.recv(1).decode('ascii')
+            if message == "p":
+                message = server.recv(1024).decode('ascii')
+                ping = float(message)
+                if max == -1:
+                    max = ping
+                    server.send("sim".encode('ascii'))
+                else: 
+                    if ping < max:
+                        server.send("sim".encode('ascii'))
+                    else:
+                        if ping >= max:
+                            server.close()
+                            server.send("nao".encode('ascii'))
+                checkpingThread = threading.Thread(target=checkping, args=(ping,server))
+                checkpingThread.start()
+                if ping < max:
+                    server.send("sim".encode('ascii'))
+                if ping >= max:
+                    server.send("nao".encode('ascii'))
             if message == "r":
                 message = server.recv(1024).decode('ascii')
                 print(message)
@@ -83,7 +123,8 @@ def messagerecv(server):
                     server.send("teste".encode('ascii'))
             #else: if mensagem verifica ip destino esse ou repassa
         except Exception as e:
-            print("Usuario desconectou")
+            print(ping)
+            print("Servidor conectado foi trocado")
             break
 
 def write(clientServer):
