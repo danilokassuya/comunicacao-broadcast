@@ -4,8 +4,7 @@ import sys
 import time
 
 print("------Cliente--------")
-#nickname = input("Choose a nickname: ")
-nickname = sys.argv[2] 
+nickname = input("Choose a nickname: ")
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 hosthead = sys.argv[1] 
@@ -22,6 +21,10 @@ def receive(client):
         try:
             message = client.recv(1024).decode('ascii')
             print(message)
+            for client in clients:
+                #print(socket.getsockname(client))
+                client.send("r".encode('ascii'))
+                client.send(message.encode('ascii'))
         except:
             print("An error occured!")
             client.close()
@@ -33,7 +36,6 @@ def getPing():
     portas = []
     client.send("ping".encode('ascii'))
     message = client.recv(19).decode('ascii')
-    print(message)
     while message != "fim":
         message = message.split()
         hosts.append(message[0])
@@ -47,8 +49,7 @@ def getPing():
         start = time.time()
         serveraux.send("t".encode('ascii'))
         message = serveraux.recv(5)
-        #ping = time.time()-start
-        ping = sys.argv[3]
+        ping = time.time()-start
         if bestPing == -1:
             bestServer = serveraux
             bestPing = ping
@@ -87,7 +88,6 @@ def messagerecv(server):
                     server.send("teste".encode('ascii'))
             #else: if mensagem verifica ip destino esse ou repassa
         except Exception as e:
-            print(message)
             print("Usuario desconectou")
             break
 
@@ -102,7 +102,8 @@ def write(clientServer):
                 #print(socket.getsockname(client))
                 client.send("r".encode('ascii'))
                 client.send(message.encode('ascii'))
-        except:
+        except Exception as e:
+            print(e)
             print("nao foi possivel enviar a mensagem")
             break
 
@@ -115,7 +116,6 @@ connectHeadThread.start()
 port = server.getsockname()
 while True:
     clientServer, addressServer = server.accept()
-    print("conectado")
     clients.append(clientServer)
     messagerecvThread = threading.Thread(target=messagerecv, args=(clientServer,))
     messagerecvThread.start()

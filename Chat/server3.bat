@@ -1,2 +1,2 @@
-py Client.py localhost teste3 1
+py Client.py localhost
 pause

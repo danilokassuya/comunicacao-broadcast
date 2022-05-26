@@ -1,4 +1,4 @@
 Server Principal:
 py "Head Server.py" <Ip da maquina host>
 
-py Client.py <ip da maquina head> <ip da maquina head>
+py Client.py <ip da maquina head>
