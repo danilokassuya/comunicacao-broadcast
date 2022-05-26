@@ -33,8 +33,8 @@ def getPing():
     portas = []
     client.send("ping".encode('ascii'))
     message = client.recv(19).decode('ascii')
+    print(message)
     while message != "fim":
-        print(message)
         message = message.split()
         hosts.append(message[0])
         portas.append(message[1])
@@ -56,6 +56,7 @@ def getPing():
             bestServer = serveraux
             bestPing = ping
         i += 1
+    print(bestPing)
     if bestPing == -1:
         return
     receive(bestServer)
@@ -86,6 +87,7 @@ def messagerecv(server):
                     server.send("teste".encode('ascii'))
             #else: if mensagem verifica ip destino esse ou repassa
         except Exception as e:
+            print(message)
             print("Usuario desconectou")
             break
 
@@ -97,6 +99,7 @@ def write(clientServer):
         message = f'{nickname}: {input("")}'
         try:
             for client in clients:
+                #print(socket.getsockname(client))
                 client.send("r".encode('ascii'))
                 client.send(message.encode('ascii'))
         except:
@@ -112,6 +115,7 @@ connectHeadThread.start()
 port = server.getsockname()
 while True:
     clientServer, addressServer = server.accept()
+    print("conectado")
     clients.append(clientServer)
     messagerecvThread = threading.Thread(target=messagerecv, args=(clientServer,))
     messagerecvThread.start()
