@@ -9,6 +9,13 @@ servers = []
 porta = []
 nicks = []
 nova = 0
+
+def send(message):
+   # print('enviado -> '+ message.decode('ascii'))
+    
+    for client in servers:
+        client.send(message)
+
 def receive(server):
     """
     Funcao responsavel por receber as mensagens  servidor.

@@ -18,9 +18,9 @@ port += 1000
 clients = []    # Lista reponsavel por salver os clientes conectados
 nicknames = []  # Lista responsavel por salver os nomes dos clientes 
 historico = []
+listaIps = []
 
-
-def broadcast(message):
+def multicast(message):
     """
     Função responsavel por mandar mensagens para todos os clientes conectados.
 
@@ -34,6 +34,9 @@ def broadcast(message):
     for client in clients:
         client.send(message)
 
+def resend():
+    for i in len(clients):
+        client.send(message)
 
 def handle(client):
     """
@@ -49,14 +52,17 @@ def handle(client):
     while True:
         try:
             message = client.recv(1024)
-            broadcast(message)
+            multicast(message)
         except:
             index = clients.index(client)
             clients.remove(client)
             client.close()
             nickname = nicknames[index]
-            broadcast(f'{nickname} saiu do chat!'.encode('ascii'))
+            multicast(f'{nickname} saiu do chat!'.encode('ascii'))
             nicknames.remove(nickname)
+            ipAux = listaIps(index)
+            listaIps.remove(ipAux)
+            resend()
             break
 
 def receive():
@@ -71,6 +77,7 @@ def receive():
         client.send('NICK'.encode('ascii'))
         
         nickname = client.recv(1024).decode('ascii')
+        listaIps.append(address)
         nicknames.append(nickname)
         clients.append(client)
         
