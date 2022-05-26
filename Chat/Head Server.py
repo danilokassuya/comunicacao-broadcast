@@ -1,3 +1,4 @@
+from genericpath import getsize
 import threading
 import sys
 import socket
@@ -9,6 +10,13 @@ servers = []
 porta = []
 nicks = []
 nova = 0
+
+def send(message):
+   # print('enviado -> '+ message.decode('ascii'))
+    
+    for client in servers:
+        client.send(message)
+
 def receive(server):
     """
     Funcao responsavel por receber as mensagens  servidor.
