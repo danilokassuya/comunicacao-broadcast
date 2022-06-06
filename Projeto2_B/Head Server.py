@@ -26,11 +26,12 @@ def receive(server):
     while True:
         try:
             message = server.recv(1024).decode('ascii')
-            print(nicks)
-            print(message)
-            print(servers)
+            i = len(nicks)
+            i -= 1
+            print(i)
+            server.send(str(i).encode('ascii'))
+            print(i)
             i = 0
-            print(nick)
             for ser in servers:
                 if nicks[i] != nick:
                     server.send(nicks[i].encode('ascii'))
