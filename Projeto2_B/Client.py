@@ -2,6 +2,7 @@ import socket
 import threading
 import sys
 import time
+import traceback
 
 print("------Cliente--------")
 nickname = input("Choose a nickname: ")
@@ -31,8 +32,12 @@ def getBest():#Retorna o melhor no para o client se conectar
     while True:
         try:
             head.send("p".encode('ascii'))
+            i = head.recv(1).decode('ascii')
+            while i != "p":
+                i = head.recv(1).decode('ascii')
             i = head.recv(100).decode('ascii')
             i = int(i)
+            head.send("p".encode('ascii'))
             nick = ""
             bestping = -1
             while i > 0:
@@ -42,6 +47,8 @@ def getBest():#Retorna o melhor no para o client se conectar
                     if message == " ":
                         break
                     nick = nick + message
+                if nick == "head":
+                    break
                 porta = ""
                 while True:
                     message = head.recv(1).decode('ascii')
@@ -54,8 +61,6 @@ def getBest():#Retorna o melhor no para o client se conectar
                     if message == " ":
                         break
                     ip = ip + message
-                print(nick)
-                print(ip,porta)
                 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 client.connect((ip, int(porta)))
                 start = time.time()
@@ -75,13 +80,16 @@ def getBest():#Retorna o melhor no para o client se conectar
                         bestporta = porta
                 client.close()
                 i -= 1
-            if nick == "":
+                print("aqui2")
+            if nick == "" or nick == "head":
                 print("Head")
                 Message()
             else:
                 print(bestnick)
                 connectBest(bestip,bestporta)
-        except:
+        except Exception as e:
+            print(traceback.format_exc())
+            print(e)
             print("Procurando novo host")
 def Header():
     while True:
