@@ -7,7 +7,6 @@ import socket
 import time
 import traceback
 
-print("------Server Principal--------")
 host = sys.argv[1] 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 servers = []
@@ -18,7 +17,8 @@ head = ""
 nova = 0
 semaforo = 0
 
-def init_sem():
+def init_sem(server):
+    print("novo client")
     global semaforo
     message = server.recv(1024).decode('ascii')
     while True:
@@ -33,10 +33,14 @@ def init_sem():
                 semaforo = 0
                 break
 def produz():
+    print("Produz")
+    print(memoria)
     memoria.append(1)
 def consome():
+    print("Consume")
+    print(memoria)
     memoria.pop()
-server.bind((host, 8080))
+server.bind((host, 8005))
 server.listen()
 while True:
     clientServer, addressServer = server.accept()

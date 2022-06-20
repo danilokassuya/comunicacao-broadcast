@@ -4,8 +4,6 @@ import sys
 import time
 import traceback
 
-from Projeto2_B.Algoritmo import consumidor
-
 print("------Cliente--------")
 nickname = input("Choose a nickname: ")
 head = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -13,7 +11,7 @@ server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 semaforo = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 hosthead = sys.argv[1] 
 head.connect((hosthead, 8000))#Head
-semaforo.connect((hosthead, 8080))
+semaforo.connect((hosthead, 8005))
 clients = []
 max = float(-1)
 port = 0
