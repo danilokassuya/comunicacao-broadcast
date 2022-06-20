@@ -18,28 +18,29 @@ nova = 0
 semaforo = 0
 
 def init_sem(server):
-    print("novo client")
-    global semaforo
-    message = server.recv(1024).decode('ascii')
     while True:
-        if semaforo == 0:
-            semaforo = 1
-            if message == "consumir":
-                consome()
-                semaforo = 0
-                break
-            else:
-                produz()   
-                semaforo = 0
-                break
+        print("novo client")
+        global semaforo
+        message = server.recv(1024).decode('ascii')
+        while True:
+            if semaforo == 0:
+                semaforo = 1
+                if message == "consumir":
+                    consome()
+                    semaforo = 0
+                    break
+                else:
+                    produz()   
+                    semaforo = 0
+                    break
 def produz():
     print("Produz")
-    print(memoria)
     memoria.append(1)
+    print(memoria)
 def consome():
     print("Consume")
-    print(memoria)
     memoria.pop()
+    print(memoria)
 server.bind((host, 8005))
 server.listen()
 while True:
