@@ -25,6 +25,7 @@ def init_sem(server):
         while True:
             if semaforo == 0:
                 semaforo = 1
+                time.sleep(10)
                 if message == "consumir":
                     consome()
                     semaforo = 0
@@ -33,6 +34,9 @@ def init_sem(server):
                     produz()   
                     semaforo = 0
                     break
+            else:
+                print("Zona bloqueada")
+                time.sleep(5)
 def produz():
     print("Produz")
     memoria.append(1)
