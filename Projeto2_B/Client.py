@@ -4,20 +4,33 @@ import sys
 import time
 import traceback
 
+from Projeto2_B.Algoritmo import consumidor
+
 print("------Cliente--------")
 nickname = input("Choose a nickname: ")
 head = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+semaforo = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 hosthead = sys.argv[1] 
 head.connect((hosthead, 8000))#Head
+semaforo.connect((hosthead, 8080))
 clients = []
 max = float(-1)
 port = 0
-
+def prodcons():
+    while True:
+        message = input()
+        if message == "consumir":
+            semaforo.send(message.encode('ascii'))
+        else :
+            if message == "produzir":
+                semaforo.send(message.encode('ascii'))
 def connectBest(ip,porta):
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect((ip, int(porta)))
     client.send("a".encode('ascii'))
+    ProdConsThread = threading.Thread(target=prodcons)
+    ProdConsThread.start()
     while True:
         try:
             message = client.recv(1024).decode('ascii')
@@ -105,6 +118,11 @@ def Message():
     while True:
         try:
             message = input()
+            if message == "consumir":
+                semaforo.send(message.encode('ascii'))
+            else :
+                if message == "produzir":
+                    semaforo.send(message.encode('ascii'))
             for cli in clients:
                 cli.send(message.encode('ascii'))
         except Exception as e:
